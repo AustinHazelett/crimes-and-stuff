@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Lorain County Crime Tracker | FOX 8 Cleveland</title>
+<title>Austin's Super Duper Extracurricular Crime Viewing Website</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Source+Sans+3:wght@300;400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
@@ -52,21 +52,22 @@
     gap: 20px;
   }
   .logo-block { display: flex; align-items: center; gap: 14px; flex-shrink: 0; }
-  .fox8-badge {
-    background: var(--fox-red);
-    color: white;
-    font-family: 'Oswald', sans-serif;
-    font-weight: 700;
-    font-size: 28px;
-    line-height: 1;
-    padding: 6px 12px 4px;
-    letter-spacing: -1px;
-    clip-path: polygon(0 0, 95% 0, 100% 100%, 5% 100%);
+  .site-badge {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--fox-navy);
+    border: 2px solid var(--fox-gold);
+    border-radius: 6px;
+    width: 48px;
+    height: 48px;
+    font-size: 26px;
+    flex-shrink: 0;
+    box-shadow: 0 0 12px rgba(245,166,35,0.3);
   }
-  .fox8-badge span { color: var(--fox-gold); }
   .logo-text { display: flex; flex-direction: column; line-height: 1.1; }
   .logo-text .station { font-family: 'Oswald', sans-serif; font-size: 13px; font-weight: 500; color: var(--fox-gray); letter-spacing: 2px; text-transform: uppercase; }
-  .logo-text .title { font-family: 'Oswald', sans-serif; font-size: 20px; font-weight: 700; color: var(--fox-white); letter-spacing: 0.5px; }
+  .logo-text .title { font-family: 'Oswald', sans-serif; font-size: 18px; font-weight: 700; color: var(--fox-white); letter-spacing: 0.5px; }
   .logo-text .county { font-size: 11px; color: var(--fox-gold); letter-spacing: 1.5px; text-transform: uppercase; font-weight: 600; }
   .header-meta { display: flex; align-items: center; gap: 20px; }
   .live-badge {
@@ -526,10 +527,10 @@
 <header class="header">
   <div class="header-inner">
     <div class="logo-block">
-      <div class="fox8-badge">FOX<span>8</span></div>
+      <div class="site-badge">🔍</div>
       <div class="logo-text">
-        <span class="station">WJW · Cleveland</span>
-        <span class="title">Crime Tracker</span>
+        <span class="station">Austin's Super Duper</span>
+        <span class="title">Extracurricular Crime Viewer</span>
         <span class="county">Lorain County, Ohio</span>
       </div>
     </div>
@@ -1124,7 +1125,7 @@ function exportPDF() {
   doc.setTextColor(255,255,255);
   doc.setFontSize(13);
   doc.setFont('helvetica','bold');
-  doc.text('FOX 8 CLEVELAND  ·  LORAIN COUNTY CRIME TRACKER', 14, 12);
+  doc.text("AUSTIN'S SUPER DUPER EXTRACURRICULAR CRIME VIEWING WEBSITE", 14, 12);
   doc.setFontSize(8);
   doc.setFont('helvetica','normal');
   doc.text(`Generated: ${new Date().toLocaleString()}`, W - 14, 12, { align:'right' });
@@ -1171,7 +1172,7 @@ function exportPDF() {
     doc.setPage(i);
     doc.setFontSize(7); doc.setTextColor(150,150,160);
     doc.text(
-      `FOX 8 Crime Tracker  ·  Page ${i} of ${pages}  ·  Data sourced from SpotCrime / Lorain County public records`,
+      `Austin's Crime Viewer  ·  Page ${i} of ${pages}  ·  Data sourced from SpotCrime / Lorain County public records`,
       14, doc.internal.pageSize.getHeight() - 7
     );
   }
