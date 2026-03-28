@@ -1,4 +1,4 @@
-<!DOTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -1490,11 +1490,11 @@ function buildTrendChart(data) {
 
 // ── SCANNER ───────────────────────────────────────────────────────────────────────────────
 const SCANNER_FEEDS = [
-  { id: 44822, name: 'Countywide P/S',  desc: 'Multi-agency countywide dispatch' },
-  { id: 2932,  name: 'P/F/EMS',         desc: 'Police, Fire & EMS — Elyria tower' },
-  { id: 44797, name: 'Lorain City',     desc: 'Lorain City PD & Fire' },
-  { id: 44197, name: 'North County',    desc: 'Northern Lorain County agencies' },
-  { id: 2506,  name: 'Public Safety N', desc: 'Elyria PD, N. Ridgeville, Sheriff' },
+  { id: 2932,  name: 'County P/F/EMS',  desc: 'Lorain County Police, Fire & EMS — most active' },
+  { id: 2506,  name: 'County North',    desc: 'Elyria PD, N. Ridgeville, Sheriff' },
+  { id: 45336, name: 'Lorain Police',   desc: 'Lorain City PD dispatch' },
+  { id: 45368, name: 'Avon Lake PD',    desc: 'Avon Lake Police' },
+  { id: 45382, name: 'Sheffield Lake',  desc: 'Sheffield Lake Police' },
 ];
 let activeFeedId = SCANNER_FEEDS[0].id;
 let scannerOpen  = false;
