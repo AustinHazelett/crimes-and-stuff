@@ -781,15 +781,29 @@ function clearDates() {
 // ── MOCK DATA ─────────────────────────────────────────────────────────────────
 function makeMockData() {
   const types = Object.keys(TYPE_COLORS);
-  const streets = [
-    'Broadway Ave, Lorain','W Erie Ave, Lorain','Oberlin Ave, Lorain',
-    'E 28th St, Lorain','Cleveland Ave, Elyria','Middle Ave, Elyria',
-    'Second St, Elyria','Abbe Rd, Elyria','Lake Ave, Avon Lake',
-    'Lear Nagle Rd, North Ridgeville','Center Ridge Rd, Westlake',
-    'Detroit Rd, Vermilion','Liberty Ave, Vermilion','Lorain Rd, Sheffield',
-    'Cooper Foster Park Rd, Amherst','Main St, Oberlin','Vine St, Oberlin',
-    'Leavitt Rd, Lorain','Pearl Ave, Lorain','Tower Blvd, Lorain',
+  // Each city owns its streets AND its map coordinates — picked together so
+  // the address label and the map pin always point to the same location.
+  const cities = [
+    { name: 'Lorain',           lat: 41.452, lon: -82.182, w: 4,
+      streets: ['Broadway Ave','W Erie Ave','Oberlin Ave','E 28th St','Leavitt Rd','Pearl Ave','Tower Blvd'] },
+    { name: 'Elyria',           lat: 41.368, lon: -82.107, w: 3,
+      streets: ['Cleveland Ave','Middle Ave','Second St','Abbe Rd','Gulf Rd'] },
+    { name: 'Avon',             lat: 41.451, lon: -82.036, w: 2,
+      streets: ['Detroit Rd','Chester Rd','Colorado Ave','Jaycox Rd'] },
+    { name: 'North Ridgeville', lat: 41.389, lon: -82.017, w: 1,
+      streets: ['Lear Nagle Rd','Mills Creek Rd','Center Ridge Rd'] },
+    { name: 'Westlake',         lat: 41.454, lon: -81.917, w: 1,
+      streets: ['Center Ridge Rd','Crocker Rd','Hilliard Blvd'] },
+    { name: 'Vermilion',        lat: 41.422, lon: -82.365, w: 1,
+      streets: ['Liberty Ave','Main St','Sanford St','Exchange St'] },
+    { name: 'Amherst',          lat: 41.398, lon: -82.240, w: 1,
+      streets: ['Cooper Foster Park Rd','Park Ave','Milan Ave'] },
+    { name: 'Oberlin',          lat: 41.294, lon: -82.217, w: 1,
+      streets: ['Main St','Vine St','College St','Professor St'] },
+    { name: 'Sheffield Lake',   lat: 41.475, lon: -82.101, w: 1,
+      streets: ['Lorain Rd','Lake Rd','Harris Rd'] },
   ];
+  const totalW = cities.reduce((s, c) => s + c.w, 0);
   const names = [
     'MICHAEL T. JOHNSON','SARAH L. SMITH','JAMES D. BROWN','DEREK W. COLE',
     'ASHLEY R. MARTINEZ','KEVIN A. ROSS','TIFFANY M. HENRY','BRIAN C. WELLS',
@@ -806,32 +820,20 @@ function makeMockData() {
     const daysAgo = Math.random() * 30;
     const dateObj = new Date(Date.now() - daysAgo * 86400000);
     const type    = types[Math.floor(Math.random() * types.length)];
-    const street  = streets[Math.floor(Math.random() * streets.length)];
     const name    = names[Math.floor(Math.random() * names.length)];
-    const cities = [
-      { lat: 41.452, lon: -82.182, w: 4 }, // Lorain
-      { lat: 41.368, lon: -82.107, w: 3 }, // Elyria
-      { lat: 41.451, lon: -82.036, w: 2 }, // Avon
-      { lat: 41.389, lon: -82.017, w: 1 }, // North Ridgeville
-      { lat: 41.454, lon: -81.917, w: 1 }, // Westlake
-      { lat: 41.422, lon: -82.365, w: 1 }, // Vermilion
-      { lat: 41.398, lon: -82.240, w: 1 }, // Amherst
-      { lat: 41.294, lon: -82.217, w: 1 }, // Oberlin
-      { lat: 41.475, lon: -82.101, w: 1 }, // Sheffield Lake
-      { lat: 41.269, lon: -82.055, w: 1 }, // Grafton
-    ];
-    const totalW = cities.reduce((s, c) => s + c.w, 0);
+    // Pick city by weight — street AND coordinates both come from the same city
     let pick = Math.random() * totalW;
-    const city = cities.find(c => (pick -= c.w) <= 0) || cities[0];
-    const lat = Math.min(city.lat + (Math.random() - 0.5) * 0.04, 41.485);
-    const lon = city.lon + (Math.random() - 0.5) * 0.055;
+    const city   = cities.find(c => (pick -= c.w) <= 0) || cities[0];
+    const street = city.streets[Math.floor(Math.random() * city.streets.length)];
+    const lat    = Math.min(city.lat + (Math.random() - 0.5) * 0.04, 41.485); // cap at shoreline
+    const lon    = city.lon + (Math.random() - 0.5) * 0.055;
     return {
       id: `mock-${i}`,
       type,
       dateObj,
       date: dateObj.toLocaleDateString('en-US'),
       time: dateObj.toLocaleTimeString('en-US', { hour:'2-digit', minute:'2-digit' }),
-      address: `${Math.floor(Math.random() * 9000 + 100)} ${street}`,
+      address: `${Math.floor(Math.random() * 9000 + 100)} ${street}, ${city.name}`,
       lat, lon,
       name,
       age: name ? Math.floor(Math.random() * 40 + 18) : null,
