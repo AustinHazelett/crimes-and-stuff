@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -434,6 +434,128 @@
   .chart-wrap { position: relative; height: 220px; }
   .chart-wrap.tall { height: 250px; }
 
+  /* ── SCANNER PANEL ── */
+  .scanner-panel {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    width: 360px;
+    background: var(--fox-navy-dark);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-top: 3px solid var(--fox-gold);
+    z-index: 900;
+    transform: translateY(110%);
+    transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
+    box-shadow: -4px -4px 30px rgba(0,0,0,0.6);
+    display: flex;
+    flex-direction: column;
+  }
+  .scanner-panel.open { transform: translateY(0); }
+  .scanner-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 14px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    background: var(--fox-navy);
+    flex-shrink: 0;
+  }
+  .scanner-title {
+    font-family: 'Oswald', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: var(--fox-gold);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .scanner-live-dot {
+    width: 7px; height: 7px;
+    background: var(--fox-red);
+    border-radius: 50%;
+    animation: blink 1.2s infinite;
+    flex-shrink: 0;
+  }
+  .scanner-close {
+    background: none; border: none;
+    color: var(--fox-gray); font-size: 18px;
+    cursor: pointer; padding: 0; line-height: 1;
+  }
+  .scanner-close:hover { color: var(--fox-red); }
+  .scanner-feeds {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    padding: 10px 14px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    flex-shrink: 0;
+  }
+  .feed-btn {
+    padding: 4px 9px;
+    font-family: 'Oswald', sans-serif;
+    font-size: 10px;
+    letter-spacing: 0.5px;
+    background: var(--fox-navy);
+    border: 1px solid rgba(255,255,255,0.12);
+    color: var(--fox-gray);
+    cursor: pointer;
+    border-radius: 2px;
+    transition: all 0.2s;
+  }
+  .feed-btn:hover { background: rgba(245,166,35,0.1); border-color: var(--fox-gold); color: var(--fox-gold); }
+  .feed-btn.active { background: rgba(245,166,35,0.15); border-color: var(--fox-gold); color: var(--fox-gold); }
+  .scanner-listen-area {
+    padding: 12px 14px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+  .scanner-listen-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 11px 16px;
+    background: var(--fox-red);
+    border: none;
+    color: white;
+    font-family: 'Oswald', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    cursor: pointer;
+    text-decoration: none;
+    border-radius: 2px;
+    transition: background 0.2s;
+    width: 100%;
+    text-align: center;
+  }
+  .scanner-listen-btn:hover { background: #a50d25; }
+  .scanner-listen-pulse {
+    width: 8px; height: 8px;
+    background: white;
+    border-radius: 50%;
+    animation: blink 1.2s infinite;
+    flex-shrink: 0;
+  }
+  .scanner-note {
+    font-size: 10px;
+    color: var(--fox-gray);
+    text-align: center;
+    line-height: 1.5;
+  }
+  .scanner-note a { color: var(--fox-gold); text-decoration: none; }
+  .scanner-note a:hover { text-decoration: underline; }
+  .scanner-feed-info {
+    padding: 8px 14px 10px;
+    font-size: 10px;
+    color: var(--fox-gray);
+    letter-spacing: 0.3px;
+    flex-shrink: 0;
+  }
+
   /* ── API KEY MODAL ── */
   .modal-overlay {
     position: fixed;
@@ -562,7 +684,31 @@
   <button class="tool-btn gold" onclick="exportCSV()">⬇ Export CSV</button>
   <button class="tool-btn gold" onclick="exportPDF()">⬇ Export PDF</button>
   <div class="toolbar-spacer"></div>
+  <button class="tool-btn" onclick="toggleScanner()" id="btn-scanner">📡 Scanner</button>
   <button class="tool-btn" onclick="openApiModal()" id="btn-apikey">🔑 API Key</button>
+</div>
+
+<!-- SCANNER PANEL -->
+<div id="scanner-panel" class="scanner-panel">
+  <div class="scanner-header">
+    <div class="scanner-title">
+      <div class="scanner-live-dot"></div>
+      📡 LIVE SCANNER · LORAIN COUNTY
+    </div>
+    <button class="scanner-close" onclick="closeScanner()">✕</button>
+  </div>
+  <div class="scanner-feeds" id="scanner-feed-btns"><!-- populated by JS --></div>
+  <div class="scanner-feed-info" id="scanner-feed-info"></div>
+  <div class="scanner-listen-area">
+    <a id="scanner-listen-btn" class="scanner-listen-btn" href="#" target="_blank" rel="noopener">
+      <span class="scanner-listen-pulse"></span>
+      🎧 LISTEN LIVE ON BROADCASTIFY
+    </a>
+    <div class="scanner-note">
+      Opens scanner audio in a new tab via <a href="https://www.broadcastify.com" target="_blank">Broadcastify</a>.
+      Free account optional for premium quality.
+    </div>
+  </div>
 </div>
 
 <!-- MAIN LAYOUT -->
@@ -1340,6 +1486,45 @@ function buildTrendChart(data) {
       },
     },
   });
+}
+
+// ── SCANNER ───────────────────────────────────────────────────────────────────────────────
+const SCANNER_FEEDS = [
+  { id: 44822, name: 'Countywide P/S',  desc: 'Multi-agency countywide dispatch' },
+  { id: 2932,  name: 'P/F/EMS',         desc: 'Police, Fire & EMS — Elyria tower' },
+  { id: 44797, name: 'Lorain City',     desc: 'Lorain City PD & Fire' },
+  { id: 44197, name: 'North County',    desc: 'Northern Lorain County agencies' },
+  { id: 2506,  name: 'Public Safety N', desc: 'Elyria PD, N. Ridgeville, Sheriff' },
+];
+let activeFeedId = SCANNER_FEEDS[0].id;
+let scannerOpen  = false;
+
+function toggleScanner() {
+  scannerOpen = !scannerOpen;
+  document.getElementById('scanner-panel').classList.toggle('open', scannerOpen);
+  document.getElementById('btn-scanner').classList.toggle('active', scannerOpen);
+  if (scannerOpen) { renderScannerFeeds(); updateScannerLink(activeFeedId); }
+}
+function closeScanner() {
+  scannerOpen = false;
+  document.getElementById('scanner-panel').classList.remove('open');
+  document.getElementById('btn-scanner').classList.remove('active');
+}
+function renderScannerFeeds() {
+  document.getElementById('scanner-feed-btns').innerHTML = SCANNER_FEEDS.map(f =>
+    '<button class="feed-btn' + (f.id === activeFeedId ? ' active' : '') + '"' +
+    ' onclick="selectScannerFeed(' + f.id + ')" title="' + f.desc + '">' + f.name + '</button>'
+  ).join('');
+}
+function selectScannerFeed(feedId) {
+  activeFeedId = feedId;
+  renderScannerFeeds();
+  updateScannerLink(feedId);
+}
+function updateScannerLink(feedId) {
+  const feed = SCANNER_FEEDS.find(f => f.id === feedId);
+  document.getElementById('scanner-feed-info').textContent = feed ? '▶ ' + feed.desc : '';
+  document.getElementById('scanner-listen-btn').href = 'https://www.broadcastify.com/listen/feed/' + feedId;
 }
 
 // ── API KEY MODAL ─────────────────────────────────────────────────────────────
