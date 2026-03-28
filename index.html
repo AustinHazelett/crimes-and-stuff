@@ -808,8 +808,23 @@ function makeMockData() {
     const type    = types[Math.floor(Math.random() * types.length)];
     const street  = streets[Math.floor(Math.random() * streets.length)];
     const name    = names[Math.floor(Math.random() * names.length)];
-    const lat     = 41.20 + Math.random() * 0.48;
-    const lon     = -82.50 + Math.random() * 0.72;
+    const cities = [
+      { lat: 41.452, lon: -82.182, w: 4 }, // Lorain
+      { lat: 41.368, lon: -82.107, w: 3 }, // Elyria
+      { lat: 41.451, lon: -82.036, w: 2 }, // Avon
+      { lat: 41.389, lon: -82.017, w: 1 }, // North Ridgeville
+      { lat: 41.454, lon: -81.917, w: 1 }, // Westlake
+      { lat: 41.422, lon: -82.365, w: 1 }, // Vermilion
+      { lat: 41.398, lon: -82.240, w: 1 }, // Amherst
+      { lat: 41.294, lon: -82.217, w: 1 }, // Oberlin
+      { lat: 41.475, lon: -82.101, w: 1 }, // Sheffield Lake
+      { lat: 41.269, lon: -82.055, w: 1 }, // Grafton
+    ];
+    const totalW = cities.reduce((s, c) => s + c.w, 0);
+    let pick = Math.random() * totalW;
+    const city = cities.find(c => (pick -= c.w) <= 0) || cities[0];
+    const lat = Math.min(city.lat + (Math.random() - 0.5) * 0.04, 41.485);
+    const lon = city.lon + (Math.random() - 0.5) * 0.055;
     return {
       id: `mock-${i}`,
       type,
